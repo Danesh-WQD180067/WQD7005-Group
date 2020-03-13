@@ -12,4 +12,6 @@ Analyzing crude oil prices using Data Mining Techniques
    #### Github Link : https://github.com/RinashiniA/WQD7005-Group
 
 # Video Link 
-https://share.vidyard.com/watch/8yYka7SPTdXBcJSkhYFYxX 
+1. Milestone 1:
+    * https://share.vidyard.com/watch/8yYka7SPTdXBcJSkhYFYxX 
+    * https://drive.google.com/file/d/112n7HU8r7dV-mMbPd0B5j3vIGM0dJ8Vg/view?usp=sharing
