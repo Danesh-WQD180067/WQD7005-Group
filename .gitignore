@@ -1,0 +1,4 @@
+.spyproject/*
+.vscode/*
+output/*
+geckodriver.log
