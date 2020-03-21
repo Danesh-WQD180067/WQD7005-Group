@@ -6,7 +6,7 @@ Data Mining Assignment
 Analyzing crude oil prices using Data Mining Techniques
 
 # Group Members
-1. Danesh A/L Durairetnam  WQD180067  (1702027/1)
+1. Danesh A/L Durairetnam  WQD180067  (17029027/1)
    #### Github Link : https://github.com/Danesh-WQD180067/WQD7005-Group
 2. Rinashini A/P Arunasalam Sukormaru  WQD170077  (17013672/1)
    #### Github Link : https://github.com/RinashiniA/WQD7005-Group
