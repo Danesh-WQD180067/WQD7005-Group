@@ -1,4 +1,5 @@
-.spyproject/*
-.vscode/*
-output/*
+.spyproject/
+.vscode/
+__pycache__/
+output/
 geckodriver.log

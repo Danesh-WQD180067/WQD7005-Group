@@ -5,10 +5,15 @@ import pandas as pd
 from selenium import webdriver
 from bs4 import BeautifulSoup
 from pathlib import Path
+from datetime import date
+from datetime import timedelta
 
 # Get HTML
 driver = webdriver.Firefox()
-driver.get("https://markets.businessinsider.com/commodities/historical-prices/oil-price/usd?type=wti")
+lastYear  = (date.today() - timedelta(days = 365)).strftime('%d.%m.%y')
+todayDate = date.today().strftime('%d.%m.%y')
+
+driver.get("https://markets.businessinsider.com/commodities/historical-prices/oil-price/usd/"   + lastYear + '_' + todayDate)
 html = driver.page_source
 driver.quit()
 
@@ -61,4 +66,4 @@ output_dir = Path('output')
 output_dir.mkdir(parents=True, exist_ok=True)
 
 # Save to CSV
-df_rows.to_csv(r'output/dataset1.csv', index=False)
+df_rows.to_csv(r'output/price.csv', index=False)
