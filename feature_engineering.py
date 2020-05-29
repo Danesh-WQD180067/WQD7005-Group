@@ -43,7 +43,7 @@ news_df['Date'].replace(['\s(.*)'], [''], regex=True, inplace=True)
 
 # Convert date string into datetime
 news_df['Date'] = pd.to_datetime(news_df['Date'])
-news_df.sort_values(by=['date'],ascending=False,inplace=True)
+news_df.sort_values(by=['Date'],ascending=False,inplace=True)
 
 # Drop duplicates
 news_df.drop_duplicates(inplace=True)
@@ -106,9 +106,13 @@ price_df.sort_values(by=['date'],ascending=False,inplace=True)
 
 
 # Find difference between current and previous day prices
-price_df['intraday_change'] = 0.0
+price_df['past_change'] = 0.0
 for i in range (0,len(price_df)-1):
-    price_df['intraday_change'][i] = price_df['closing_price'][i+1] - price_df['closing_price'][i]
+    price_df['past_change'][i] = price_df['closing_price'][i+1] - price_df['closing_price'][i]
+
+price_df['future_change'] = 0.0
+for i in range (0,len(price_df)-1):
+    price_df['future_change'][i+1] = price_df['closing_price'][i+1] - price_df['closing_price'][i]
 
 # Extract day and month
 def get_day(x):
