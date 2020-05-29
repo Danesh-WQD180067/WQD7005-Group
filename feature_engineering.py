@@ -61,7 +61,7 @@ news_df.to_csv(r'output/news_clean.csv',index=False)
 
 #############################################################################
 
-#                               NEWS DATASET                                #
+#                                 SENTIMENT                                 #
 
 #############################################################################
 
@@ -89,7 +89,7 @@ polarity_mean.to_csv(r'output/news_sentiment_mean.csv',index=False)
 
 #############################################################################
 
-#                               NEWS DATASET                                #
+#                               PRICE DATASET                               #
 
 #############################################################################    
     
@@ -108,12 +108,12 @@ price_df.sort_values(by=['date'],ascending=False,inplace=True)
 # Find difference between current and previous day prices
 price_df['past_change'] = 0.0
 for i in range (0,len(price_df)-1):
-    price_df['past_change'][i] = price_df['closing_price'][i+1] - price_df['closing_price'][i]
+    price_df['past_change'][i] = price_df['closing_price'][i] - price_df['closing_price'][i+1]
 
 price_df['future_change'] = 0.0
 for i in range (0,len(price_df)-1):
-    price_df['future_change'][i+1] = price_df['closing_price'][i+1] - price_df['closing_price'][i]
-
+    price_df['future_change'][i+1] = price_df['closing_price'][i] - price_df['closing_price'][i+1]
+ 
 # Extract day and month
 def get_day(x):
     return x.day

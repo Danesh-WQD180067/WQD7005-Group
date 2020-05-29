@@ -19,6 +19,9 @@ Analyzing crude oil prices using Data Mining Techniques
 2. Milestone 2:
     * https://drive.google.com/file/d/117O0hJXfQRXM9vF9q6p_eMoqWxdGn2Lf/view?usp=sharing
     * https://share.vidyard.com/watch/rwUuw5fBP3WP4LZpNSuvxq?
+
+3. Milestone 3 & 4:
+    * https://drive.google.com/file/d/11KEo6PisDYOyNBJiw2YQ26wDdQrHPjMU/view?usp=sharing
     
     
 # Scraping
