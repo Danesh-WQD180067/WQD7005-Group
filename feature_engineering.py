@@ -128,17 +128,17 @@ price_df['weekday'] = price_df['date'].apply(get_weekday)
 
 #############################################################################
 
-#                               MERGE                                #
+#                                  MERGE                                    #
 
 #############################################################################
 
 merged_df = pd.merge(polarity_mean,
                      price_df,
-                     how='left',
+                     how='inner',
                      left_on=['Date'],
                      right_on=['date'])
 
-polarity_mean.to_csv(r'output/dataset.csv',index=False)
+merged_df.to_csv(r'output/dataset.csv',index=False)
 
 
 
