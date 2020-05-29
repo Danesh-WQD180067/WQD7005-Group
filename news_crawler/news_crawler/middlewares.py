@@ -15,8 +15,10 @@ from selenium.webdriver.support import expected_conditions as EC
 
 options = FirefoxOptions()
 options.add_argument("--headless")
-options.add_argument("--width=2560")
-options.add_argument("--height=1440")
+options.add_argument("--width=1920")
+options.add_argument("--height=1080")
+
+driver = webdriver.Firefox(options = options)
 
 class NewsCrawlerSpiderMiddleware(object):
     # Not all methods need to be defined. If a method is not defined,
@@ -89,15 +91,12 @@ class NewsCrawlerDownloaderMiddleware(object):
         # - or raise IgnoreRequest: process_exception() methods of
         #   installed downloader middleware will be called
         
-        driver = webdriver.Firefox(options = options)
-        
         driver.get(request.url)
         WebDriverWait(driver, 10).until(
             EC.presence_of_element_located(( By.XPATH, "//table[@class='table table-small']/tbody/tr/td[2]"))
         )
         body = driver.page_source
         
-        driver.quit()
         return HtmlResponse(driver.current_url, body = body, encoding = 'utf-8', request = request)
 
     def process_response(self, request, response, spider):
