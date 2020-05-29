@@ -7,10 +7,13 @@ from pyhive import hive
 import pandas as pd
 
 df_source = pd.read_csv(r'output/news.csv')
+df_source['News'] = df_source['News'].str.replace(r',', '')
+
 
 # Define HDFS interface
 hdfs_interface = InsecureClient('http://localhost:50070')
 hdfs_interface.list('/')
+hdfs_interface.delete('/wqd7005/raw_news', recursive=True, skip_trash=True)
 
 # Create hdfs directories to store data
 hdfs_interface.makedirs('/wqd7005')
@@ -34,7 +37,6 @@ with hdfs_interface.read('/wqd7005/raw_news/000000_0', length=1024) as reader:
   content = reader.read()
 content
 
-
 # Create Hive Cursor
 host_name = "localhost"
 port = 10000
@@ -50,6 +52,7 @@ cur.execute("CREATE EXTERNAL TABLE IF NOT EXISTS \
                     news STRING) \
             ROW FORMAT DELIMITED FIELDS TERMINATED BY ',' \
             STORED AS TEXTFILE LOCATION '/wqd7005/raw_news'")
+            
             
 # Check if warehousing successful:
 cur.execute("SELECT * FROM raw_news LIMIT 10")
