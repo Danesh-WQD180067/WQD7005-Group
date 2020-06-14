@@ -27,7 +27,9 @@ Analyzing crude oil prices using Data Mining Techniques
 # Scraping
 
 1. Price Scraping:
-    -   use python script `python price_scraper.py`
+    -   install geckodriver and firefox
+    -   run python script `python price_scraper.py`
 2. News Scraping:
+    -   install scrapy
     -   cd to news_crawler folder
     -   use scrapy command `scrapy crawl news_crawler -o ..\output\news.csv`

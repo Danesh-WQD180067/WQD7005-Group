@@ -19,6 +19,7 @@ options.add_argument("--width=1920")
 options.add_argument("--height=1080")
 
 driver = webdriver.Firefox(options = options)
+driver.set_page_load_timeout(10)
 
 class NewsCrawlerSpiderMiddleware(object):
     # Not all methods need to be defined. If a method is not defined,
@@ -93,7 +94,7 @@ class NewsCrawlerDownloaderMiddleware(object):
         
         driver.get(request.url)
         WebDriverWait(driver, 10).until(
-            EC.presence_of_element_located(( By.XPATH, "//table[@class='table table-small']/tbody/tr/td[2]"))
+            EC.presence_of_element_located(( By.XPATH, r"//div[@class='col-md-6 further-news-container latest-news-padding']/div/div/a[@class='news-link']"))
         )
         body = driver.page_source
         
@@ -111,7 +112,7 @@ class NewsCrawlerDownloaderMiddleware(object):
     def process_exception(self, request, exception, spider):
         # Called when a download handler or a process_request()
         # (from other downloader middleware) raises an exception.
-
+        return self.process_request(request, spider)
         # Must either:
         # - return None: continue processing this exception
         # - return a Response object: stops process_exception() chain
