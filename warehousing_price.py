@@ -12,6 +12,9 @@ df_source = pd.read_csv(r'output/price.csv')
 hdfs_interface = InsecureClient('http://localhost:50070')
 hdfs_interface.list('/')
 
+# Delete old data
+hdfs_interface.delete('/wqd7005/raw_price', recursive=True, skip_trash=True)
+
 # Create hdfs directories to store data
 hdfs_interface.makedirs('/wqd7005')
 hdfs_interface.makedirs('/wqd7005/raw_price')

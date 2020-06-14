@@ -10,8 +10,8 @@ import pandas as pd
 import numpy as np
 import re
 
-# For sentiment analysis
-from textblob import TextBlob
+# NLTK VADER for sentiment analysis
+from nltk.sentiment.vader import SentimentIntensityAnalyzer
 
 # Create Hive Cursor
 host_name = "localhost"
@@ -65,25 +65,101 @@ news_df.to_csv(r'output/news_clean.csv',index=False)
 
 #############################################################################
 
-news_df['sentiment_polarity'] = 0.0
-news_df['sentiment_subjectivity'] = 0.0
+# Load data to pandas
+news_df = pd.read_csv(r'output/news_clean.csv')
 
-# Drop duplicates
-news_df.drop_duplicates(inplace=True)
-news_df = news_df.reset_index(drop=True)
+# New words and values
+new_words = {
+    
+    'doubled'       : 20,
+    'tripled'       : 20,
+    'undersupply'   : 20,
+    
+    'confidence'    : 10,
+    'crush'         : 10,
+    'jump'          : 10,
+    'bull'          : 10,
+    'spend'         : 10,
+    'spends'        : 10,
+    'invest'        : 10,
+    'invests'       : 10,
+    'boom'          : 10,
+    
+    'up'            : 5,
+    'gain'          : 5,
+    'gains'         : 5,
+    'high'          : 5,
+    'rise'          : 5,
+    'rises'         : 5,
+    'rising'        : 5,
+    'revival'       : 5,
+    'recovery'      : 5,
+    'rally'         : 5,
+    'surge'         : 5,
+    'surges'        : 5,
+    'beat'          : 5,
+    'beats'         : 5,
+    'profit'        : 5,
+    'climb'         : 5,
+    'climbs'        : 5,
+    'buy'           : 5,
+    'buys'          : 5,
+    'rebound'       : 5,
+    'rebounds'      : 5,
+    
+    'down'          : -5,
+    'slump'         : -5,
+    'tumble'        : -5,
+    'misses'        : -5,
+    'lose'          : -5,
+    'losses'        : -5,
+    
+    'glut'          : -10,
+    'trouble'       : -10,
+    'fear'          : -10,
+    'fears'         : -10,
+    'fall'          : -10,
+    'falls'         : -10,
+    'bear'          : -10,
+    'cheap'         : -10,
+    'plunge'        : -10,
+    'sell'          : -10,
+    'sells'         : -10,
+    'crash'         : -10,
+    'crashes'       : -10,
+    'plummet'       : -10,
+    'downturn'      : -10,
+    'bust'          : -10,
+    
+    
+    'oversupply'    : -20,
+    'bankruptcy'    : -20,
+    'crisis'        : -20,
+    'bail'          : -20,
+    'bailout'       : -20,
+    
+}
 
-for i in range(0,len(news_df)):
-    blob = TextBlob(news_df['News'][i])
-    Sentiment = blob.sentiment
-    news_df['sentiment_polarity'][i] = Sentiment.polarity
-    news_df['sentiment_subjectivity'][i] = Sentiment.subjectivity
+# Instantiate the sentiment intensity analyzer with the existing lexicon
+vader = SentimentIntensityAnalyzer()
+# Update the lexicon
+vader.lexicon.update(new_words)
 
+
+
+scores = news_df['News'].apply(vader.polarity_scores)
+
+# Convert the list of dicts into a DataFrame
+scores_df = pd.DataFrame.from_records(scores)
+
+# Join the DataFrames
+news_df = news_df.join(scores_df)
 
 news_df = news_df.drop(['News'], axis=1)
 
 news_df.to_csv(r'output/news_sentiment.csv',index=False)
 
-polarity_mean = news_df.groupby('Date', as_index=False)['sentiment_polarity'].mean()
+polarity_mean = news_df.groupby('Date', as_index=False)[['neg', 'neu', 'pos' , 'compound']].mean()
 
 polarity_mean.to_csv(r'output/news_sentiment_mean.csv',index=False)
 
@@ -129,12 +205,17 @@ price_df['day'] = price_df['date'].apply(get_day)
 price_df['month'] = price_df['date'].apply(get_month)
 price_df['weekday'] = price_df['date'].apply(get_weekday)
 
+price_df.to_csv(r'output/price_features.csv',index=False)
 
 #############################################################################
 
 #                                  MERGE                                    #
 
 #############################################################################
+
+# Load data to pandas
+polarity_mean = pd.read_csv(r'output/news_sentiment_mean.csv')
+price_df = pd.read_csv(r'output/price_features.csv')
 
 merged_df = pd.merge(polarity_mean,
                      price_df,

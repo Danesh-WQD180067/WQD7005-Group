@@ -13,6 +13,8 @@ df_source['News'] = df_source['News'].str.replace(r',', '')
 # Define HDFS interface
 hdfs_interface = InsecureClient('http://localhost:50070')
 hdfs_interface.list('/')
+
+# Delete old data
 hdfs_interface.delete('/wqd7005/raw_news', recursive=True, skip_trash=True)
 
 # Create hdfs directories to store data
