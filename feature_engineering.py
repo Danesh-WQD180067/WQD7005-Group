@@ -56,6 +56,20 @@ for i in range(0, len(news_df)):
     else:
         news_df.drop(i, inplace=True)
 
+# Extract day and month
+def get_day(x):
+    return x.day
+
+def get_month(x):
+    return x.month
+
+def get_weekday(x):
+    return x.weekday()
+    
+news_df['day'] = news_df['Date'].apply(get_day)
+news_df['month'] = news_df['Date'].apply(get_month)
+news_df['weekday'] = news_df['Date'].apply(get_weekday)
+
 
 news_df.to_csv(r'output/news_clean.csv',index=False)
 
@@ -159,7 +173,7 @@ news_df = news_df.drop(['News'], axis=1)
 
 news_df.to_csv(r'output/news_sentiment.csv',index=False)
 
-polarity_mean = news_df.groupby('Date', as_index=False)[['neg', 'neu', 'pos' , 'compound']].mean()
+polarity_mean = news_df.groupby('Date', as_index=False)[['day','month','weekday','neg', 'neu', 'pos' , 'compound']].mean()
 
 polarity_mean.to_csv(r'output/news_sentiment_mean.csv',index=False)
 
@@ -172,7 +186,7 @@ polarity_mean.to_csv(r'output/news_sentiment_mean.csv',index=False)
 # Load data to pandas
 cur.execute("SELECT * FROM raw_price")
 raw_price=cur.fetchall()
-price_df=pd.DataFrame(data=raw_price)    
+price_df = pd.DataFrame(data=raw_price)    
 
 price_df.columns = ['date', 'closing_price', 'open_price', 'daily_high', 'daily_low']
 
@@ -189,23 +203,10 @@ for i in range (0,len(price_df)-1):
 price_df['future_change'] = 0.0
 for i in range (0,len(price_df)-1):
     price_df['future_change'][i+1] = price_df['closing_price'][i] - price_df['closing_price'][i+1]
- 
-# Extract day and month
-def get_day(x):
-    return x.day
 
-def get_month(x):
-    return x.month
+price_df = price_df
 
-def get_weekday(x):
-    return x.weekday()
-    
-
-price_df['day'] = price_df['date'].apply(get_day)
-price_df['month'] = price_df['date'].apply(get_month)
-price_df['weekday'] = price_df['date'].apply(get_weekday)
-
-price_df.to_csv(r'output/price_features.csv',index=False)
+price_df.to_csv(r'output/price_features.csv', index=False)
 
 #############################################################################
 
@@ -222,6 +223,8 @@ merged_df = pd.merge(polarity_mean,
                      how='inner',
                      left_on=['Date'],
                      right_on=['date'])
+
+merged_df.drop(['date'], axis=1, inplace = True)
 
 merged_df.to_csv(r'output/dataset.csv',index=False)
 
