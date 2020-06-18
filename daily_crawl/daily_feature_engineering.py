@@ -5,20 +5,12 @@ Created on Fri May 29 03:42:00 2020
 @author: USER
 """
 
-from pyhive import hive
 import pandas as pd
 import numpy as np
-import re
+
 
 # NLTK VADER for sentiment analysis
 from nltk.sentiment.vader import SentimentIntensityAnalyzer
-
-# Create Hive Cursor
-host_name = "localhost"
-port = 10000
-conn = hive.Connection(host=host_name, port=port, auth='NOSASL')
-cur = conn.cursor()
-
 
 #############################################################################
 
@@ -26,10 +18,7 @@ cur = conn.cursor()
 
 #############################################################################
 
-# Load data to pandas
-cur.execute("SELECT * FROM raw_news")
-raw_news=cur.fetchall()
-news_df=pd.DataFrame(data=raw_news)
+news_df=pd.read_csv(r'output/news.csv', )
 
 news_df.columns = ['Date', 'News']
 
@@ -48,28 +37,6 @@ news_df.sort_values(by=['Date'],ascending=False,inplace=True)
 # Drop duplicates
 news_df.drop_duplicates(inplace=True)
 news_df = news_df.reset_index(drop=True)
-
-# Drop all rows not containing the word "oil"
-for i in range(0, len(news_df)):
-    if re.search(r'oil', news_df['News'][i], re.I) is not None:
-        continue
-    else:
-        news_df.drop(i, inplace=True)
-
-# Extract day and month
-def get_day(x):
-    return x.day
-
-def get_month(x):
-    return x.month
-
-def get_weekday(x):
-    return x.weekday()
-    
-news_df['day'] = news_df['Date'].apply(get_day)
-news_df['month'] = news_df['Date'].apply(get_month)
-news_df['weekday'] = news_df['Date'].apply(get_weekday)
-
 
 news_df.to_csv(r'output/news_clean.csv',index=False)
 
@@ -160,7 +127,6 @@ vader = SentimentIntensityAnalyzer()
 vader.lexicon.update(new_words)
 
 
-
 scores = news_df['News'].apply(vader.polarity_scores)
 
 # Convert the list of dicts into a DataFrame
@@ -173,7 +139,7 @@ news_df = news_df.drop(['News'], axis=1)
 
 news_df.to_csv(r'output/news_sentiment.csv',index=False)
 
-polarity_mean = news_df.groupby('Date', as_index=False)[['day','month','weekday','neg', 'neu', 'pos' , 'compound']].mean()
+polarity_mean = news_df.groupby('Date', as_index=False)[['neg', 'neu', 'pos' , 'compound']].mean()
 
 polarity_mean.to_csv(r'output/news_sentiment_mean.csv',index=False)
 
@@ -184,27 +150,15 @@ polarity_mean.to_csv(r'output/news_sentiment_mean.csv',index=False)
 #############################################################################    
     
 # Load data to pandas
-cur.execute("SELECT * FROM raw_price")
-raw_price=cur.fetchall()
-price_df = pd.DataFrame(data=raw_price)    
+price_df = pd.read_csv(r'output/price.csv')
 
-price_df.columns = ['date', 'closing_price', 'open_price', 'daily_high', 'daily_low']
+price_df = price_df.drop(['2','3','4','5'], axis=1)
+
+price_df.columns = ['date', 'closing_price']
 
 # Convert date string into datetime
 price_df['date'] = pd.to_datetime(price_df['date'])
 price_df.sort_values(by=['date'],ascending=False,inplace=True)
-
-
-# Find difference between current and previous day prices
-price_df['past_change'] = 0.0
-for i in range (0,len(price_df)-1):
-    price_df['past_change'][i] = price_df['closing_price'][i] - price_df['closing_price'][i+1]
-
-price_df['future_change'] = 0.0
-for i in range (0,len(price_df)-1):
-    price_df['future_change'][i+1] = price_df['closing_price'][i] - price_df['closing_price'][i+1]
-
-price_df = price_df
 
 price_df.to_csv(r'output/price_features.csv', index=False)
 

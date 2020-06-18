@@ -6,16 +6,11 @@ Created on Tue Jun 16 21:27:32 2020
 """
 
 import pandas as pd
-from matplotlib import pyplot
 
-from sklearn.preprocessing import MinMaxScaler
+from sklearn.externals import joblib
+from keras.models import load_model
 
-from sklearn.metrics import mean_squared_error
-from keras.models import Sequential
-from keras.layers import Dense
-from keras.layers import LSTM
-
-from math import sqrt
+from datetime import datetime, timedelta
 from numpy import concatenate
 
 # convert series to supervised learning
@@ -52,17 +47,22 @@ def series_to_supervised(df, n_in=1, n_out=1, dropnan=True):
 # load dataset
 dataset = pd.read_csv(r'output/dataset.csv', header=0, index_col=0)
 
-# Drop unnecessary columns
-dataset.drop(['day', 'month', 'weekday',
-              'open_price', 'daily_high', 'daily_low', 
-              'future_change', 'past_change'], 
-             axis=1, inplace = True)
-
 dataset = dataset[['closing_price', 'neg', 'neu', 'pos', 'compound']]
+
+# Get only past 30 days
+dataset = dataset.tail(31)
+
+lastdate = dataset.tail(1).index.item()
+lastdate = datetime.strptime(lastdate, '%Y-%m-%d')
+tomorrow = lastdate - timedelta(days=1)
+
+# Load Scaler
+# And now to load...
+scaler_filename = r'../pickles/scaler.gz'
+scaler = joblib.load(scaler_filename) 
 
 # Normalize Features
 values = dataset.values
-scaler = MinMaxScaler(feature_range=(0, 1))
 scaled = scaler.fit_transform(values)
 
 dataset = pd.DataFrame(scaled)
@@ -81,56 +81,22 @@ print(reframed.head())
 # split into train and test sets
 values = reframed.values
 n_train_days = len(values) - 30
-train = values[:n_train_days, :]
-test = values[n_train_days:, :]
+
+test = values[:, :]
 # split into input and outputs
 n_obs = n_days * n_features
-train_X, train_y = train[:, :n_obs], train[:, -n_features]
+
 test_X, test_y = test[:, :n_obs], test[:, -n_features]
-print(train_X.shape, len(train_X), train_y.shape)
 # reshape input to be 3D [samples, timesteps, features]
-train_X = train_X.reshape((train_X.shape[0], n_days, n_features))
 test_X = test_X.reshape((test_X.shape[0], n_days, n_features))
-print(train_X.shape, train_y.shape, test_X.shape, test_y.shape)
-
-##############################################################################
-
-#                               Design Model                                 #
-
-##############################################################################
-
-# design network
-model = Sequential()
-
-# 1st Layer
-model.add(LSTM(50, input_shape=(train_X.shape[1], train_X.shape[2])))
-
-# Output Layer
-model.add(Dense(1))
-model.compile(loss='mae', optimizer='adam')
-
-##############################################################################
-
-#                                Train Model                                 #
-
-##############################################################################
-
-# fit network
-history = model.fit(train_X, train_y, epochs=50, batch_size=30, 
-                    validation_data=(test_X, test_y), 
-                    verbose=2, shuffle=False)
-# plot history
-pyplot.plot(history.history['loss'], label='train')
-pyplot.plot(history.history['val_loss'], label='test')
-pyplot.legend()
-pyplot.show()
-
 
 ##############################################################################
 
 #                                 Test Model                                 #
 
 ##############################################################################
+
+model = load_model('../pickles/model.h5')
 
 # make a prediction
 yhat = model.predict(test_X)
@@ -139,25 +105,29 @@ test_X = test_X.reshape((test_X.shape[0], n_days*n_features))
 inv_yhat = concatenate((yhat, test_X[:, -4:]), axis=1)
 inv_yhat = scaler.inverse_transform(inv_yhat)
 inv_yhat = inv_yhat[:,0]
-# invert scaling for actual
-test_y = test_y.reshape((len(test_y), 1))
-inv_y = concatenate((test_y, test_X[:, -4:]), axis=1)
-inv_y = scaler.inverse_transform(inv_y)
-inv_y = inv_y[:,0]
-# calculate RMSE
-rmse = sqrt(mean_squared_error(inv_y, inv_yhat))
-print('Test RMSE: %.3f' % rmse)
 
 ##############################################################################
 
-#                                Plot Result                                 #
+#                                Save Result                                 #
 
 ##############################################################################
 
-# Plot prediction vs result
-pyplot.plot(inv_y, color='green', label='Oil Price')
-pyplot.plot(inv_yhat, color='red', label='Predicted Oil Price')
-pyplot.legend()
-pyplot.title('Oil Price Prediction Results')
-pyplot.xlabel('time')
-pyplot.ylabel('Oil Price')
+from sqlalchemy import create_engine
+from sqlalchemy import Table, Column, Integer, Float, DateTime, MetaData
+
+engine = create_engine('sqlite:///../pickles/college.db', echo = True)
+meta = MetaData()
+
+predictions = Table(
+   'predictions', meta, 
+   Column('id', Integer, primary_key = True), 
+   Column('p_date', DateTime), 
+   Column('price', Float(precision= 5, asdecimal=False)), 
+)
+
+meta.create_all(engine)
+
+ins = predictions.insert()
+ins = predictions.insert().values(p_date = tomorrow, price = inv_yhat)
+conn = engine.connect()
+result = conn.execute(ins)
