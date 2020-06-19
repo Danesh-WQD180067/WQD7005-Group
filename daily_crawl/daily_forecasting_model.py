@@ -10,7 +10,7 @@ import pandas as pd
 from sklearn.externals import joblib
 from keras.models import load_model
 
-from datetime import datetime, timedelta
+from datetime import datetime
 from numpy import concatenate
 
 # convert series to supervised learning
@@ -54,7 +54,8 @@ dataset = dataset.tail(31)
 
 lastdate = dataset.tail(1).index.item()
 lastdate = datetime.strptime(lastdate, '%Y-%m-%d')
-tomorrow = lastdate - timedelta(days=1)
+
+lastprice = dataset.tail(1).closing_price.item()
 
 # Load Scaler
 # And now to load...
@@ -121,13 +122,14 @@ meta = MetaData()
 predictions = Table(
    'predictions', meta, 
    Column('id', Integer, primary_key = True), 
-   Column('p_date', DateTime), 
-   Column('price', Float(precision= 5, asdecimal=False)), 
+   Column('p_date', DateTime),
+   Column('p_price', Float(asdecimal=False)), 
+   Column('f_price', Float(asdecimal=False)), 
 )
 
 meta.create_all(engine)
 
 ins = predictions.insert()
-ins = predictions.insert().values(p_date = tomorrow, price = inv_yhat)
+ins = predictions.insert().values(p_date = lastdate, p_price=lastprice, f_price = inv_yhat)
 conn = engine.connect()
 result = conn.execute(ins)
