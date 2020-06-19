@@ -32,7 +32,7 @@ Analyzing crude oil prices using Data Mining Techniques
     * [Rinashini Milestone 4]()
 
 4.  Milestone 5:
-    * [Danesh Milestone 5]()
+    * [Danesh Milestone 5](https://drive.google.com/file/d/11RgFsm2fk5npx-WyF57akETcjF0gNsE4/view?usp=sharing)
     * [Rinashini Milestone 5]()
 
 # Scraping
@@ -60,7 +60,7 @@ First navigate to the **data_mining** directory
 ##  Daily Prediction
 
 1. Create a schedule in Windows Task Scheduler
-    -   set the trigger to Daily at just past midnight
+    -   set the trigger to Daily at 7:00 AM (UTC-5:00) Eastern Time (7:00 PM Malaysia)
     -   set the action to run `daily_job.bat` located in the **daily_crawl** directory
     -   ensure that the **start in** parameter is set to the **daily_crawl** directory
     -   stop the task if it runs longer than 1 hour
