@@ -6,34 +6,38 @@ from pyhive import hive
 
 import pandas as pd
 
-df_source = pd.read_csv(r'output/dataset1.csv')
+df_source = pd.read_csv(r'output/news.csv')
+df_source['News'] = df_source['News'].str.replace(r',', '')
+
 
 # Define HDFS interface
 hdfs_interface = InsecureClient('http://localhost:50070')
 hdfs_interface.list('/')
 
+# Delete old data
+hdfs_interface.delete('/wqd7005/raw_news', recursive=True, skip_trash=True)
+
 # Create hdfs directories to store data
 hdfs_interface.makedirs('/wqd7005')
-hdfs_interface.makedirs('/wqd7005/source')
+hdfs_interface.makedirs('/wqd7005/raw_news')
 hdfs_interface.list('/wqd7005')
 
-# Write data to source directory
+# Write data to raw_news directory
 
 # text buffer
 s_buf = io.StringIO()
 # saving a data frame to a buffer (same as with a regular file):
 df_source.to_csv(s_buf, index=False, header=False)
 
-hdfs_interface.write('/wqd7005/source/000000_0', 
+hdfs_interface.write('/wqd7005/raw_news/000000_0', 
                      data=s_buf.getvalue(), 
                      overwrite=True, 
                      encoding = 'utf-8')
 
 # Check if file has been written correctly
-with hdfs_interface.read('/wqd7005/source/000000_0', length=1024) as reader:
+with hdfs_interface.read('/wqd7005/raw_news/000000_0', length=1024) as reader:
   content = reader.read()
 content
-
 
 # Create Hive Cursor
 host_name = "localhost"
@@ -43,18 +47,16 @@ cur = conn.cursor()
 
 # DATE	
 
-# Create External table for source
-cur.execute("DROP TABLE IF EXISTS source")
+# Create External table for raw_news
+cur.execute("DROP TABLE IF EXISTS raw_news")
 cur.execute("CREATE EXTERNAL TABLE IF NOT EXISTS \
-            source (tdate STRING, \
-                    closing_price DECIMAL(5,2), \
-                    open DECIMAL(5,2), \
-                    daily_high DECIMAL(5,2), \
-                    daily_low DECIMAL(5,2)) \
+            raw_news (tdate STRING, \
+                    news STRING) \
             ROW FORMAT DELIMITED FIELDS TERMINATED BY ',' \
-            STORED AS TEXTFILE LOCATION '/wqd7005/source'")
+            STORED AS TEXTFILE LOCATION '/wqd7005/raw_news'")
+            
             
 # Check if warehousing successful:
-cur.execute("SELECT * FROM source LIMIT 10")
+cur.execute("SELECT * FROM raw_news LIMIT 10")
 check=cur.fetchall()
 df_check=pd.DataFrame(data=check)
