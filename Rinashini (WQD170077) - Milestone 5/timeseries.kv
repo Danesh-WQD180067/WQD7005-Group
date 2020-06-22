@@ -1,0 +1,230 @@
+#:kivy 1.11.0
+#:import SlideTransition kivy.uix.screenmanager.SlideTransition
+
+<Manager>:
+    transition: SlideTransition()
+
+    Main:
+        name: 'Main'
+
+    Time:
+        name: 'Time'
+        
+    Time2:
+        name: 'Time2'
+        
+    Time3:
+        name: 'Time3'
+        
+    Time4:
+        name: 'Time4'
+        
+    Time5:
+        name: 'Time5'
+
+<Main>:
+           
+    BoxLayout:
+        canvas.before:
+            Color:
+                rgba: 1, 1, 1, 1
+            Rectangle: 
+                size: self.size
+        orientation: 'vertical'
+        padding: 0,50,0,0
+        
+        Image:
+            source: 'CrudeOil2.png'
+            size: self.texture_size
+                
+        Label:
+            text: 'WTI Crude Oil Time Series Forecasting'
+            bold: True
+            font_size: '40sp'
+            color: 1,0,0,0
+
+        Button:
+            size_hint: 1, 0.3
+            text: 'WTI crude oil prices from 03/02/2006 until 29/05/2020'
+            bold: True
+            on_release:
+                root.manager.current = 'Time'
+                
+        Button:
+            size_hint: 1, 0.3
+            text: 'WTI Crude Oil Time Series Forecasting Overall'
+            bold: True
+            on_release:
+                root.manager.current = 'Time2'
+                
+        Button:
+            size_hint: 1, 0.3
+            text: 'WTI Crude Oil Time Series Forecasting for year 2020'
+            bold: True
+            on_release:
+                root.manager.current = 'Time3'
+                
+        Button:
+            size_hint: 1, 0.3
+            text: 'WTI Crude Oil Time Series Forecasting for month of April 2020'
+            bold: True
+            on_release:
+                root.manager.current = 'Time4'
+                
+        Button:
+            size_hint: 1, 0.3
+            bold: True
+            text: 'WTI Crude Oil Time Series Forecasting for month of May 2020'
+            on_release:
+                root.manager.current = 'Time5'
+
+<Time>:
+    bar: bar
+
+    canvas.before:
+        Color:
+            rgba: 1, 1, 1, 1
+        Rectangle:
+            pos: self.pos
+            size: self.size
+
+    BoxLayout:
+        id: bar
+
+    Button:
+        text:' Go to Main Menu'
+        font_size: 20
+        bold: True
+        size_hint: None, None
+        size: 300, 50
+        pos_hint: {'center_x': .5, 'center_y': .05 }
+        color: 1, 1, 1, 1
+        on_press: root.manager.current = 'Main'
+
+<Time2>:
+    bar: bar
+
+    canvas.before:
+        Color:
+            rgba: 1, 1, 1, 1
+        Rectangle:
+            pos: self.pos
+            size: self.size
+
+    BoxLayout:
+        id: bar
+        
+    Label:
+        text: 'The Mean Absolute Percentage Error (MAPE) for this overall prediction model is 0.0289 meaning that this model has an accuracy of approximately 97.11% in predicting the next 669 observations.'
+        text_size: self.width, None
+        font_size: 15
+        size_hint: None, None
+        size: 500, 100
+        pos_hint: {'center_x': .5, 'center_y': .2 }
+        color: 0,0,0,1
+
+    Button:
+        text:' Go to Main Menu'
+        font_size: 20
+        bold: True
+        size_hint: None, None
+        size: 300, 50
+        pos_hint: {'center_x': .5, 'center_y': .05 }
+        color: 1, 1, 1, 1
+        on_press: root.manager.current = 'Main'
+        
+<Time3>:
+    bar: bar
+
+    canvas.before:
+        Color:
+            rgba: 1, 1, 1, 1
+        Rectangle:
+            pos: self.pos
+            size: self.size
+
+    BoxLayout:
+        id: bar
+
+    Label:
+        text: 'The Mean Absolute Percentage Error (MAPE) of 0.1094 means that this ARIMA time series forecasting model for the year 2020 has an accuracy of approximately 89.06% in predicting the next 103 observations.'
+        text_size: self.width, None
+        font_size: 15
+        size_hint: None, None
+        size: 500, 100
+        pos_hint: {'center_x': .5, 'center_y': .2 }
+        color: 0,0,0,1
+
+    Button:
+        text:' Go to Main Menu'
+        font_size: 20
+        bold: True
+        size_hint: None, None
+        size: 300, 50
+        pos_hint: {'center_x': .5, 'center_y': .05 }
+        color: 1, 1, 1, 1
+        on_press: root.manager.current = 'Main'
+        
+<Time4>:
+    bar: bar
+
+    canvas.before:
+        Color:
+            rgba: 1, 1, 1, 1
+        Rectangle:
+            pos: self.pos
+            size: self.size
+
+    BoxLayout:
+        id: bar
+        
+    Label:
+        text: 'The Mean Absolute Percentage Error (MAPE) of 0.3812 means that this ARIMA time series forecasting model for the month of April 2020 has an accuracy of approximately 61.88% in predicting 21 observations.'
+        text_size: self.width, None
+        font_size: 15
+        size_hint: None, None
+        size: 500, 100
+        pos_hint: {'center_x': .5, 'center_y': .2 }
+        color: 0,0,0,1
+
+    Button:
+        text:' Go to Main Menu'
+        font_size: 20
+        bold: True
+        size_hint: None, None
+        size: 300, 50
+        pos_hint: {'center_x': .5, 'center_y': .05 }
+        color: 1, 1, 1, 1
+        on_press: root.manager.current = 'Main'
+        
+<Time5>:
+    bar: bar
+
+    canvas.before:
+        Color:
+            rgba: 1, 1, 1, 1
+        Rectangle:
+            pos: self.pos
+            size: self.size
+
+    BoxLayout:
+        id: bar
+       
+    Label:
+        text: 'The Mean Absolute Percentage Error (MAPE) of 0.0464 means that this ARIMA time series forecasting model for the month of May 2020 has an accuracy of approximately 95.36% in predicting the final 21 observations.'
+        text_size: self.width, None
+        font_size: 15
+        size_hint: None, None
+        size: 500, 100
+        pos_hint: {'center_x': .5, 'center_y': .2 }
+        color: 0,0,0,1
+
+    Button:
+        text:' Go to Main Menu'
+        font_size: 20
+        bold: True
+        size_hint: None, None
+        size: 300, 50
+        pos_hint: {'center_x': .5, 'center_y': .05 }
+        color: 1, 1, 1, 1
+        on_press: root.manager.current = 'Main'
