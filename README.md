@@ -9,8 +9,10 @@ Analyzing crude oil prices using Data Mining Techniques
 # Group Members
 
 1.  Danesh A/L Durairetnam  WQD180067  (17029027/1)
+    #### Flask App
     #### Github Link : https://github.com/Danesh-WQD180067/WQD7005-Group
 2.  Rinashini A/P Arunasalam Sukormaru  WQD170077  (17013672/1)
+    #### Kivy App
     #### Github Link : https://github.com/RinashiniA/WQD7005-Group
 
 # Video Link
@@ -30,7 +32,7 @@ Analyzing crude oil prices using Data Mining Techniques
 4.  Milestone 4:
     * [Danesh (Milestone 3 & 4)](https://drive.google.com/file/d/11KEo6PisDYOyNBJiw2YQ26wDdQrHPjMU/view?usp=sharing) same as above
     * [Rinashini Milestone 4]()
-
+    
 4.  Milestone 5:
     * [Danesh Milestone 5](https://drive.google.com/file/d/11RgFsm2fk5npx-WyF57akETcjF0gNsE4/view?usp=sharing)
     * [Rinashini Milestone 5]()
