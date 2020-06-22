@@ -6,3 +6,4 @@ output/
 pickles/
 testbed/
 geckodriver.log
+*.zip
