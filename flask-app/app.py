@@ -7,7 +7,7 @@ from sqlalchemy import desc
 
 app = Flask(__name__)
 
-engine = create_engine('sqlite:///../pickles/college.db', echo = True)
+engine = create_engine('sqlite:///../pickles/predictions.db', echo = True)
 meta = MetaData()
 
 predictions = Table(
@@ -17,7 +17,6 @@ predictions = Table(
     Column('p_price', Float(asdecimal=False)), 
     Column('f_price', Float(asdecimal=False)),  
 )
-
 
 @app.route('/')
 def index():

@@ -116,7 +116,7 @@ inv_yhat = inv_yhat[:,0]
 from sqlalchemy import create_engine
 from sqlalchemy import Table, Column, Integer, Float, DateTime, MetaData
 
-engine = create_engine('sqlite:///../pickles/college.db', echo = True)
+engine = create_engine('sqlite:///../pickles/predictions.db', echo = True)
 meta = MetaData()
 
 predictions = Table(
